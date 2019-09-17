@@ -108,18 +108,18 @@ if __name__ == "__main__":
     if choice == "yes":
         a = GameState(turn='o')
         print("The computer is 'x'. You are 'o'")
-        
     else:
         a = GameState()
         print("The computer is 'x'. You are 'o'. Please wait several seconds as the computer calculates its first move.....")
+
+
     
     while a.winner() == None:
         if a.player_turn == a.computer:
             move = minimax(a)[0]
             a.make_move('x', move)
-
-            
         print(a)
+        
         if a.winner() != None:
             break
         
@@ -131,8 +131,8 @@ if __name__ == "__main__":
             except AssertionError:
                 user_move = input("That's illegal. It's your turn. Make a move, for example 'a1', or 'c3': ")
                 
-
     if a.winner() not in (0, None):
         print(str(a.winner()) + ' has won')
     elif a.winner() == 0:
+        print(a)
         print("Tie")
