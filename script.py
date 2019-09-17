@@ -76,7 +76,7 @@ class GameState:
 
 
 
-def minimax(game_state: GameState) -> str:
+def minimax(game_state: GameState, alpha: int, beta: int) -> str:
     def find_end(x: (str, tuple)) -> int:
         if type(x[1]) == int:
             return x[1]
@@ -92,13 +92,28 @@ def minimax(game_state: GameState) -> str:
     elif game_state.winner() == None:
 
         turn = game_state.player_turn
-
+        final = []
+        
         if turn == game_state.computer:
-            return max([(move, minimax(game_state.copy().make_move(turn, move))) for move in game_state.all_possible_moves()],
-                      key = lambda x:find_end(x))
+            max_val = -2
+            for move in game_state.all_possible_moves():
+                temp = (move, minimax(game_state.copy().make_move(turn, move), alpha, beta))
+                final.append(temp)
+                max_val = max(max_val, find_end(temp))
+                alpha = max(alpha, max_val)
+                if beta <= alpha:
+                    break
+            return max(final, key = lambda x:find_end(x))
         else:
-            return min([(move, minimax(game_state.copy().make_move(turn, move))) for move in game_state.all_possible_moves()],
-                      key = lambda x:find_end(x))
+            min_val = 2
+            for move in game_state.all_possible_moves():
+                temp = ((move, minimax(game_state.copy().make_move(turn, move), alpha, beta)))
+                final.append(temp)
+                min_val = min(min_val, find_end(temp))
+                alpha = min(alpha, min_val)
+                if beta <= alpha:
+                    break
+            return min(final, key = lambda x:find_end(x))
 
 
 if __name__ == "__main__":
@@ -116,7 +131,7 @@ if __name__ == "__main__":
     
     while a.winner() == None:
         if a.player_turn == a.computer:
-            move = minimax(a)[0]
+            move = minimax(a, -2, 2)[0]
             a.make_move('x', move)
         print(a)
         
