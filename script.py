@@ -92,28 +92,28 @@ def minimax(game_state: GameState, alpha: int, beta: int) -> str:
     elif game_state.winner() == None:
 
         turn = game_state.player_turn
-        final = []
+        final = set()
         
         if turn == game_state.computer:
             max_val = -2
             for move in game_state.all_possible_moves():
                 temp = (move, minimax(game_state.copy().make_move(turn, move), alpha, beta))
-                final.append(temp)
+                final.add(temp)
                 max_val = max(max_val, find_end(temp))
                 alpha = max(alpha, max_val)
                 if beta <= alpha:
                     break
-            return max(final, key = lambda x:find_end(x))
+            return max(final, key = find_end)
         else:
             min_val = 2
             for move in game_state.all_possible_moves():
                 temp = ((move, minimax(game_state.copy().make_move(turn, move), alpha, beta)))
-                final.append(temp)
+                final.add(temp)
                 min_val = min(min_val, find_end(temp))
                 alpha = min(alpha, min_val)
                 if beta <= alpha:
                     break
-            return min(final, key = lambda x:find_end(x))
+            return min(final, key = find_end)
 
 
 if __name__ == "__main__":
