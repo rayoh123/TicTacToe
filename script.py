@@ -78,7 +78,9 @@ class GameState:
 
 def minimax(game_state: GameState, alpha: int, beta: int) -> str:
     def find_end(x: (str, tuple)) -> int:
-        if type(x[1]) == int:
+        if type(x) == int:
+            return x
+        elif type(x[1]) == int:
             return x[1]
         else:
             return find_end(x[1])
@@ -92,52 +94,37 @@ def minimax(game_state: GameState, alpha: int, beta: int) -> str:
     elif game_state.winner() == None:
 
         turn = game_state.player_turn
-        final = set()
         
         if turn == game_state.computer:
             max_val = -2
             for move in game_state.all_possible_moves():
                 temp = (move, minimax(game_state.copy().make_move(turn, move), alpha, beta))
-                final.add(temp)
-                max_val = max(max_val, find_end(temp))
-                alpha = max(alpha, max_val)
-                if beta <= alpha:
+                max_val = max(max_val, temp, key=find_end)
+                alpha = max(alpha, max_val, key=find_end)
+                if find_end(beta) <= find_end(alpha):
                     break
-            return max(final, key = find_end)
+            return max_val
         else:
             min_val = 2
             for move in game_state.all_possible_moves():
                 temp = ((move, minimax(game_state.copy().make_move(turn, move), alpha, beta)))
-                final.add(temp)
-                min_val = min(min_val, find_end(temp))
-                alpha = min(alpha, min_val)
-                if beta <= alpha:
+                min_val = min(min_val, temp, key=find_end)
+                beta = min(alpha, min_val, key=find_end)
+                if find_end(beta) <= find_end(alpha):
                     break
-            return min(final, key = find_end)
+            return min_val
 
 
 if __name__ == "__main__":
-    choice = input("Do you want to go first? (yes/no): ")
-    while choice not in ('yes', 'no'):
-        choice = input("Please enter in yes/no. Do you want to go first? (yes/no): ")
-    if choice == "yes":
-        a = GameState(turn='o')
-        print("The computer is 'x'. You are 'o'")
-    else:
-        a = GameState()
-        print("The computer is 'x'. You are 'o'. Please wait several seconds as the computer calculates its first move.....")
-
-
-    
+    a = GameState()
+    print("The computer is 'x'. You are 'o'. Please wait several seconds as the computer calculates its first move.....")
     while a.winner() == None:
-        if a.player_turn == a.computer:
-            move = minimax(a, -2, 2)[0]
-            a.make_move('x', move)
+        move = minimax(a, -2, 2)[0]
+        a.make_move('x', move)
         print(a)
-        
         if a.winner() != None:
             break
-        
+
         user_move = input("It's your turn. Make a move, for example 'a1', or 'c3': ")
         while True:
             try:
@@ -146,8 +133,8 @@ if __name__ == "__main__":
             except AssertionError:
                 user_move = input("That's illegal. It's your turn. Make a move, for example 'a1', or 'c3': ")
                 
+
     if a.winner() not in (0, None):
         print(str(a.winner()) + ' has won')
     elif a.winner() == 0:
-        print(a)
         print("Tie")
