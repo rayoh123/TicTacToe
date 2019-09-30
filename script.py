@@ -37,10 +37,9 @@ class GameState:
             raise AssertionError
         
         self._board[move[0]][int(move[1])-1] = player
-        if player == self.computer:
-            self.player_turn = self.human
-        else:
-            self.player_turn = self.computer
+        if player == self.computer: self.player_turn = self.human
+        else                      : self.player_turn = self.computer
+        
         return self
 
     def winner(self):
@@ -109,7 +108,7 @@ def minimax(game_state: GameState, alpha: int, beta: int) -> str:
             for move in game_state.all_possible_moves():
                 temp = ((move, minimax(game_state.copy().make_move(turn, move), alpha, beta)))
                 min_val = min(min_val, temp, key=find_end)
-                beta = min(alpha, min_val, key=find_end)
+                beta = min(beta, min_val, key=find_end)
                 if find_end(beta) <= find_end(alpha):
                     break
             return min_val
@@ -127,16 +126,14 @@ if __name__ == "__main__":
         print("The computer is 'x'. You are 'o'. Please wait several seconds as the computer calculates its first move.....")
 
 
-    
     while a.winner() == None:
         if a.player_turn == a.computer:
             move = minimax(a, -2, 2)[0]
             a.make_move('x', move)
         print(a)
-        
         if a.winner() != None:
             break
-        
+
         user_move = input("It's your turn. Make a move, for example 'a1', or 'c3': ")
         while True:
             try:
@@ -145,8 +142,8 @@ if __name__ == "__main__":
             except AssertionError:
                 user_move = input("That's illegal. It's your turn. Make a move, for example 'a1', or 'c3': ")
                 
+
     if a.winner() not in (0, None):
         print(str(a.winner()) + ' has won')
     elif a.winner() == 0:
-        print(a)
         print("Tie")
