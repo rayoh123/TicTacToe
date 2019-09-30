@@ -116,15 +116,27 @@ def minimax(game_state: GameState, alpha: int, beta: int) -> str:
 
 
 if __name__ == "__main__":
-    a = GameState()
-    print("The computer is 'x'. You are 'o'. Please wait several seconds as the computer calculates its first move.....")
+    choice = input("Do you want to go first? (yes/no): ")
+    while choice not in ('yes', 'no'):
+        choice = input("Please enter in yes/no. Do you want to go first? (yes/no): ")
+    if choice == "yes":
+        a = GameState(turn='o')
+        print("The computer is 'x'. You are 'o'")
+    else:
+        a = GameState()
+        print("The computer is 'x'. You are 'o'. Please wait several seconds as the computer calculates its first move.....")
+
+
+    
     while a.winner() == None:
-        move = minimax(a, -2, 2)[0]
-        a.make_move('x', move)
+        if a.player_turn == a.computer:
+            move = minimax(a, -2, 2)[0]
+            a.make_move('x', move)
         print(a)
+        
         if a.winner() != None:
             break
-
+        
         user_move = input("It's your turn. Make a move, for example 'a1', or 'c3': ")
         while True:
             try:
@@ -133,8 +145,8 @@ if __name__ == "__main__":
             except AssertionError:
                 user_move = input("That's illegal. It's your turn. Make a move, for example 'a1', or 'c3': ")
                 
-
     if a.winner() not in (0, None):
         print(str(a.winner()) + ' has won')
     elif a.winner() == 0:
+        print(a)
         print("Tie")
